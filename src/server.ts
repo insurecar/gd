@@ -1,30 +1,39 @@
-import * as dotenv from 'dotenv'
+import * as dotenv from "dotenv";
 import { app } from "./app";
-import mongoose from 'mongoose'
-
+import mongoose from "mongoose";
 
 dotenv.config({
-    path: `${__dirname}/../config.env`
-})
+    path: `${__dirname}/../config.env`,
+});
 
 if (!process.env.DATABASE || !process.env.DATABASE_PASSWORD) {
-    console.error('❌ DATABASE or DATABASE_PASSWORD not defined in config.env');
+    console.error("❌ DATABASE or DATABASE_PASSWORD not defined in config.env");
     process.exit(1);
 }
 
+const DB = process.env.DATABASE.replace(
+    "<PASSWORD>",
+    process.env.DATABASE_PASSWORD
+);
 
+(async function startServer() {
+    try {
+        await mongoose.connect(DB);
+        console.log("✅ DB connection successful");
 
-const DB = "mongodb+srv://rostyslavshyian:5WMLUJyxaGwL13FL@cluster-grid.ewhwmtr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-grid";
+        const PORT = process.env.PORT || 8000;
+        const server = app.listen(PORT, () => {
+            console.log(`🚀 Server running on port ${PORT}`);
+        });
 
-mongoose.connect(DB)
-    .then(() => {
-        console.log('DB connection successful');
-    })
-    .catch((err) => {
-        console.error('DB connection error:', err);
-    });
-const PORT = process.env.PORT || 8000;
+        process.on('unhandledRejection', (err: any) => {
+            console.error("💥💥💥 UNHANDLED REJECTION! Shutting down...");
+            console.error(err.name, err.message);
+            server.close(() => process.exit(1));
+        });
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+    } catch (err) {
+        console.error("❌ DB connection error:", err);
+        process.exit(1);
+    }
+})();
