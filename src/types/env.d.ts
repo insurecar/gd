@@ -6,5 +6,6 @@ declare namespace NodeJS {
     CONNECTION_STRING: string;
     JWT_SECRET: string;
     JWT_EXPIRES_IN: string;
+    NODE_ENV: string;
   }
 }
