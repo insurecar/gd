@@ -10,6 +10,10 @@ export interface IUserDocument extends Document {
   photo?: string;
   password: string;
   passwordConfirm: string | undefined;
+  correctPassword(
+    candidatePassword: string,
+    userPassword: string
+  ): Promise<boolean>;
 }
 
 const userSchema = new mongoose.Schema<IUserDocument>({
@@ -54,5 +58,12 @@ userSchema.pre("save", async function (next) {
   this.passwordConfirm = undefined;
   next();
 });
+
+userSchema.methods.correctPassword = async function (
+  candidatePassword: string,
+  userPassword: string
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 export const User = mongoose.model<IUserDocument>("User", userSchema);

@@ -7,14 +7,14 @@ type SendTokenResponseParams = (
   user: IUserDocument,
   statusCode: number,
   res: Response
-) => void;
+) => Promise<void>;
 
-export const sendTokenResponse: SendTokenResponseParams = (
+export const sendTokenResponse: SendTokenResponseParams = async (
   user,
   statusCode,
   res
 ) => {
-  const token = signToken(String(user._id));
+  const token = await signToken(String(user._id));
 
   const cookieOptions = createCookieOptions();
 
