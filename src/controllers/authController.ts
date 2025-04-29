@@ -1,19 +1,19 @@
-import { Response, Request, NextFunction } from "express";
-import { catchAsync, sendTokenResponse } from "../utils";
+import { catchAsync } from "../utils/catchAsync";
 import { User } from "../models/User";
+import { sendTokenResponse } from "../utils/sendTokenResponse";
+import { Request, Response, NextFunction } from "express";
 
-type Controller = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => Promise<void>;
+export const authController = {
+  signup: catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const newUser = await User.create({
+        name: req.body.name,
+        email: req.body.email,
+        password: req.body.password,
+        passwordConfirm: req.body.passwordConfirm,
+      });
 
-export const signup: Controller = catchAsync(async (req, res, next) => {
-  const newUser = await User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
-  });
-  sendTokenResponse({ user: newUser, statusCode: 201, res });
-});
+      sendTokenResponse(newUser, 201, res);
+    }
+  ),
+};

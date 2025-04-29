@@ -26,7 +26,6 @@ const handleDuplicateFieldsDB = (err: any) => {
 };
 
 const sendErrorProd = (err: AppError, res: Response) => {
-  // Якщо помилка очікувана (тобто AppError)
   if (err.isOperational) {
     res.status(err.statusCode).json({
       status: err.status,

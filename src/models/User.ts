@@ -1,6 +1,7 @@
 import { Document, Types } from "mongoose";
 import mongoose from "mongoose";
 import validator from "validator";
+import bcrypt from "bcryptjs";
 
 export interface IUserDocument extends Document {
   _id: Types.ObjectId;
@@ -8,10 +9,10 @@ export interface IUserDocument extends Document {
   email: string;
   photo?: string;
   password: string;
-  passwordConfirm: string;
+  passwordConfirm: string | undefined;
 }
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema<IUserDocument>({
   name: {
     type: String,
     required: [true, "Please, tell us your name"],
@@ -35,16 +36,23 @@ const userSchema = new mongoose.Schema({
   },
   passwordConfirm: {
     type: String,
+    select: false,
     required: [true, "Please provide a confirm password"],
     validate: {
       validator: function (this: any, el: string) {
-        console.log("THIS_____PASSWORD", this.password);
-        console.log("CURRENT______PASS", el);
         return el === this.password;
       },
       message: "Passwords are not the same!",
     },
   },
+});
+
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+
+  this.password = await bcrypt.hash(this.password, 12);
+  this.passwordConfirm = undefined;
+  next();
 });
 
 export const User = mongoose.model<IUserDocument>("User", userSchema);

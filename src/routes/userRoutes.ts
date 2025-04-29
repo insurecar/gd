@@ -1,6 +1,5 @@
 import express from "express";
-import { signup } from "../controllers";
-import { catchAsync } from "../utils";
+import { authController } from "../controllers";
 export const userRouter = express.Router();
 
-userRouter.post("/signup", catchAsync(signup));
+userRouter.post("/signup", authController.signup);

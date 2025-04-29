@@ -1,2 +1,2 @@
-export { signup } from "./authController";
+export { authController } from "./authController";
 export { globalErrorHandler } from "./errorController";

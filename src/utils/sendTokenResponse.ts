@@ -1,27 +1,30 @@
-import { Response } from "express"
-import { IUserDocument } from '../models/User'
-import { createCookieOptions } from './createCookieOptions'
-import { signToken } from './signToken'
+import { Response } from "express";
+import { IUserDocument } from "../models/User";
+import { createCookieOptions } from "./createCookieOptions";
+import { signToken } from "./signToken";
 
+type SendTokenResponseParams = (
+  user: IUserDocument,
+  statusCode: number,
+  res: Response
+) => void;
 
-interface SendTokenResponseParams {
-    user: IUserDocument,
-    statusCode: number,
-    res: Response
-}
+export const sendTokenResponse: SendTokenResponseParams = (
+  user,
+  statusCode,
+  res
+) => {
+  const token = signToken(String(user._id));
 
-export const sendTokenResponse = ({ user, statusCode, res }: SendTokenResponseParams): void => {
-    const token = signToken(String(user._id));
+  const cookieOptions = createCookieOptions();
 
-    const cookieOptions = createCookieOptions();
+  res.cookie("__join-token", token, cookieOptions);
 
-    res.cookie('__join-token', token, cookieOptions);
+  user.password = undefined!;
 
-    user.password = undefined!;
-
-    res.status(statusCode).json({
-        status: "success",
-        token,
-        data: { user },
-    });
+  res.status(statusCode).json({
+    status: "success",
+    token,
+    data: { user },
+  });
 };
