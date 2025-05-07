@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { IUserDocument } from "../models/User";
+import { IUserDocument } from "../models";
 import { createCookieOptions } from "./createCookieOptions";
 import { signToken } from "./signToken";
 

@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { globalErrorHandler } from "./controllers";
-import { userRouter } from "./routes";
+import { userRouter, employeeRouter } from "./routes";
+
 export const app = express();
 
 app.use(express.json());
@@ -12,5 +13,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/api/v2/users", userRouter);
+
+app.use("/api/v2/employees", employeeRouter);
 
 app.use(globalErrorHandler);

@@ -1,23 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "../utils";
 
-// export const globalErrorHandler = (
-//   err: AppError,
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-//   console.log("aksdjakdsjkajsdkajsdkajsdkajsdk", err);
-
-//   err.statusCode = err.statusCode || 500;
-//   err.status = err.status || "error";
-
-//   res.status(err.statusCode).json({
-//     status: "err.status",
-//     message: err.message,
-//   });
-// };
-
 const handleDuplicateFieldsDB = (err: any) => {
   const field = Object.keys(err.keyPattern)[0];
   const value = err.keyValue[field];
@@ -32,7 +15,6 @@ const sendErrorProd = (err: AppError, res: Response) => {
       message: err.message,
     });
   } else {
-    // Неочікувана помилка: не показуємо деталей користувачу
     console.error("💥 ERROR:", err);
 
     res.status(500).json({

@@ -1,8 +1,6 @@
-import { catchAsync } from "../utils/catchAsync";
-import { User } from "../models/User";
-import { sendTokenResponse } from "../utils/sendTokenResponse";
 import { Request, Response, NextFunction } from "express";
-import { AppError } from "../utils";
+import { User } from "../models";
+import { AppError, sendTokenResponse, catchAsync } from "../utils";
 
 export const authController = {
   signup: catchAsync(
@@ -27,4 +25,9 @@ export const authController = {
 
     sendTokenResponse(user, 200, res);
   }),
+  protect: catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      next();
+    }
+  ),
 };
