@@ -6,13 +6,10 @@ export const signToken = (id: string): Promise<string> => {
   }
 
   const secret = process.env.JWT_SECRET as string;
-  const expiresIn = process.env
-    .JWT_EXPIRES_IN as unknown as jwt.SignOptions["expiresIn"];
+  const expiresIn = process.env.JWT_EXPIRES_IN as SignOptions["expiresIn"];
 
   return new Promise((resolve, reject) => {
-    const signOptions: SignOptions = {
-      expiresIn,
-    };
+    const signOptions: SignOptions = { expiresIn };
 
     jwt.sign({ id }, secret, signOptions, (err, token) => {
       if (err || !token) {
